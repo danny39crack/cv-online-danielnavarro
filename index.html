@@ -208,7 +208,8 @@
     .tags-box-title { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.9rem; }
     .tags-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .ftag { background: rgba(124,111,255,0.1); border: 1px solid rgba(124,111,255,0.2); color: var(--text); font-size: 0.82rem; padding: 0.3rem 0.85rem; border-radius: 100px; }
-    .ltag { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); color: var(--accent3); font-size: 0.82rem; padding: 0.3rem 0.85rem; border-radius: 100px; }
+    .ltag { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); color: var(--accent3); font-size: 0.82rem; padding: 0.3rem 0.85rem; border-radius: 100px; display: inline-flex; align-items: center; gap: 0.45rem; }
+    .flag-mini { width: 20px; height: 14px; border-radius: 3px; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.4); overflow: hidden; }
 
     /* SKILLS */
     .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
@@ -272,6 +273,149 @@
     .fade-in { opacity: 0; transform: translateY(25px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+    /* ===================== CUSTOM CURSOR ===================== */
+    * { cursor: none; }
+    @media (hover: none) { * { cursor: auto; } }
+    #cursor-dot {
+      position: fixed; top: 0; left: 0; z-index: 99999;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent3);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.25s, height 0.25s, opacity 0.25s;
+      mix-blend-mode: screen;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0; z-index: 99998;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(124,111,255,0.6);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.3s, height 0.3s, border-color 0.3s;
+    }
+    body:has(a:hover) #cursor-dot, body:has(button:hover) #cursor-dot { width: 14px; height: 14px; background: var(--accent); }
+    body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 56px; height: 56px; border-color: var(--accent); }
+
+    /* ===================== TILT CARDS ===================== */
+    .skill-card, .exp-card, .project-card, .stat-card {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    /* ===================== SKILL BAR ANIMATION ===================== */
+    .skill-fill { width: 0 !important; transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .skill-card.bar-animated .skill-fill { width: var(--bar-w) !important; }
+
+    /* ===================== TYPING CURSOR ===================== */
+    .typing-cursor { display: inline-block; width: 3px; height: 1em; background: var(--accent3); margin-left: 3px; vertical-align: middle; animation: cursor-blink 0.75s step-end infinite; }
+    @keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ===================== RIPPLE ===================== */
+    .ripple-btn { position: relative; overflow: hidden; }
+    .ripple-circle { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.25); transform: scale(0); animation: ripple-anim 0.6s linear; pointer-events: none; }
+    @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+    /* ===================== SCROLL PROGRESS ===================== */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0; height: 2px; z-index: 9999;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      width: 0%; transition: width 0.1s linear;
+    }
+
+    /* ===================== MAGNETIC HOVER ===================== */
+    .nav-links a { transition: color 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+
+    /* ===================== GLITCH EFFECT ON HERO NAME ===================== */
+    .hero-name { position: relative; }
+    .hero-name:hover .glitch { animation: glitch 0.4s steps(2) infinite; }
+    @keyframes glitch {
+      0%   { text-shadow: 2px 0 #ff6b9d, -2px 0 #00d4ff; }
+      25%  { text-shadow: -3px 0 #ff6b9d, 3px 0 #00d4ff; clip-path: inset(10% 0 80% 0); }
+      50%  { text-shadow: 3px 2px #7c6fff, -3px -2px #ff6b9d; }
+      75%  { text-shadow: -2px 0 #00d4ff, 2px 0 #ff6b9d; clip-path: inset(60% 0 20% 0); }
+      100% { text-shadow: 2px 0 #ff6b9d, -2px 0 #00d4ff; clip-path: none; }
+    }
+
+    /* ===================== AURORA ANIMATED BG ===================== */
+    .aurora {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .aurora-blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.07;
+      animation: aurora-move linear infinite alternate;
+    }
+    .aurora-blob:nth-child(1) { width: 600px; height: 400px; background: var(--accent); top: -10%; left: -10%; animation-duration: 18s; }
+    .aurora-blob:nth-child(2) { width: 500px; height: 500px; background: var(--accent3); bottom: -10%; right: -5%; animation-duration: 22s; animation-delay: -8s; }
+    .aurora-blob:nth-child(3) { width: 400px; height: 300px; background: var(--accent2); top: 40%; left: 30%; animation-duration: 26s; animation-delay: -14s; }
+    @keyframes aurora-move {
+      0%   { transform: translate(0,0) scale(1) rotate(0deg); }
+      33%  { transform: translate(60px,-40px) scale(1.15) rotate(60deg); }
+      66%  { transform: translate(-40px,70px) scale(0.9) rotate(120deg); }
+      100% { transform: translate(30px,20px) scale(1.1) rotate(180deg); }
+    }
+
+    /* ===================== FLOATING HERO PARTICLES ===================== */
+    .hero-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .hparticle {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      animation: hfloat ease-in-out infinite alternate;
+    }
+    @keyframes hfloat {
+      from { transform: translateY(0) translateX(0); opacity: 0.4; }
+      to   { transform: translateY(-30px) translateX(15px); opacity: 0.1; }
+    }
+
+    /* ===================== NEON GLOW on skill icon ===================== */
+    .skill-card:hover .skill-icon {
+      text-shadow: 0 0 20px rgba(124,111,255,0.8), 0 0 40px rgba(0,212,255,0.4);
+      transform: scale(1.2) rotate(-5deg);
+      display: inline-block;
+      transition: transform 0.3s, text-shadow 0.3s;
+    }
+    .skill-icon { transition: transform 0.3s, text-shadow 0.3s; display: inline-block; }
+
+    /* ===================== CLIP-PATH SECTION REVEAL ===================== */
+    .clip-reveal {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.9s cubic-bezier(0.77,0,0.175,1);
+    }
+    .clip-reveal.visible { clip-path: inset(0 0% 0 0); }
+
+    /* ===================== MAGNETIC NAV LINKS ===================== */
+    .nav-links a { display: inline-block; }
+
+    /* ===================== CARD SHINE ===================== */
+    .skill-card, .exp-card, .project-card {
+      background-image: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(124,111,255,0.08) 0%, transparent 60%);
+    }
+
+    /* ===================== TIMELINE DOT PULSE ===================== */
+    .timeline-dot { animation: tl-pulse 2.5s ease infinite; }
+    @keyframes tl-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(124,111,255,0.6); }
+      50%       { box-shadow: 0 0 0 8px rgba(124,111,255,0); }
+    }
+
+    /* ===================== STAGGER CHILDREN ===================== */
+    .skills-grid .skill-card:nth-child(1) { transition-delay: 0.05s; }
+    .skills-grid .skill-card:nth-child(2) { transition-delay: 0.12s; }
+    .skills-grid .skill-card:nth-child(3) { transition-delay: 0.19s; }
+    .skills-grid .skill-card:nth-child(4) { transition-delay: 0.26s; }
+    .skills-grid .skill-card:nth-child(5) { transition-delay: 0.33s; }
+    .skills-grid .skill-card:nth-child(6) { transition-delay: 0.40s; }
+    .exp-grid .exp-card:nth-child(1)      { transition-delay: 0.05s; }
+    .exp-grid .exp-card:nth-child(2)      { transition-delay: 0.15s; }
+
+    /* ===================== CONTACT LINK HOVER SLIDE ===================== */
+    .contacto-link { overflow: hidden; position: relative; }
+    .contacto-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: -100%; width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      transition: left 0.35s ease;
+    }
+    .contacto-link:hover::after { left: 0; }
+
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .nav-links { display: none; }
@@ -290,6 +434,16 @@
   </style>
 </head>
 <body>
+  <div id="scroll-progress"></div>
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- Aurora animated background -->
+  <div class="aurora">
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+  </div>
 
   <!-- ==================== LANGUAGE SCREEN ==================== -->
   <div id="lang-screen">
@@ -355,15 +509,16 @@
 
     <!-- HERO -->
     <section id="hero">
+      <div class="hero-particles" id="hero-particles"></div>
       <div class="hero-inner">
         <div class="hero-avatar-wrap">👨‍💻</div>
         <div class="hero-tag" data-es="Disponible para trabajar · Madrid" data-en="Available for work · Madrid">Disponible para trabajar · Madrid</div>
-        <h1 class="hero-name">Daniel<br><span class="highlight">Navarro.</span></h1>
-        <p class="hero-role" data-es="Desarrollador de Aplicaciones Web & Multiplataforma" data-en="Web & Cross-Platform Application Developer">Desarrollador de Aplicaciones Web & Multiplataforma</p>
+        <h1 class="hero-name">Daniel<br><span class="highlight glitch">Navarro.</span></h1>
+        <p class="hero-role"><span id="typing-text"></span><span class="typing-cursor"></span></p>
         <p class="hero-desc" data-es="Me apasiona crear soluciones web funcionales y bien diseñadas. Resolutivo, trabajador y con alta capacidad de aprendizaje. Interesado en desarrollo web y ciberseguridad." data-en="Passionate about building functional and well-designed web solutions. Problem-solver, hardworking, fast learner. Interested in web development and cybersecurity.">Me apasiona crear soluciones web funcionales y bien diseñadas. Resolutivo, trabajador y con alta capacidad de aprendizaje. Interesado en desarrollo web y ciberseguridad.</p>
         <div class="hero-btns">
-          <a href="#proyectos" class="btn btn-primary" data-es="Ver proyectos →" data-en="View projects →">Ver proyectos →</a>
-          <a href="#contacto" class="btn btn-outline" data-es="Contactar" data-en="Contact me">Contactar</a>
+          <a href="#proyectos" class="btn btn-primary ripple-btn" data-es="Ver proyectos →" data-en="View projects →">Ver proyectos →</a>
+          <a href="#contacto" class="btn btn-outline ripple-btn" data-es="Contactar" data-en="Contact me">Contactar</a>
         </div>
       </div>
     </section>
@@ -372,7 +527,7 @@
     <section id="sobre-mi">
       <div class="section-inner">
         <div class="section-label" data-es="Sobre mí" data-en="About me">Sobre mí</div>
-        <h2 class="section-title fade-in" data-es="Quién soy" data-en="Who I am">Quién soy</h2>
+        <h2 class="section-title fade-in clip-reveal" data-es="Quién soy" data-en="Who I am">Quién soy</h2>
         <div class="sobre-grid">
           <div class="sobre-text fade-in">
             <p data-es="Soy <strong>Daniel Navarro</strong>, desarrollador web y de aplicaciones con base en <strong>Madrid</strong>. Actualmente cursando el Grado Superior en Desarrollo de Aplicaciones Web (DAW)." data-en="I'm <strong>Daniel Navarro</strong>, a web and application developer based in <strong>Madrid</strong>. Currently enrolled in the Higher Degree in Web Application Development (DAW).">Soy <strong>Daniel Navarro</strong>, desarrollador web y de aplicaciones con base en <strong>Madrid</strong>. Actualmente cursando el Grado Superior en Desarrollo de Aplicaciones Web (DAW).</p>
@@ -399,8 +554,8 @@
             <div class="tags-box">
               <div class="tags-box-title" data-es="Idiomas" data-en="Languages">Idiomas</div>
               <div class="tags-list">
-                <span class="ltag" data-es="🇪🇸 Español — Nativo" data-en="🇪🇸 Spanish — Native">🇪🇸 Español — Nativo</span>
-                <span class="ltag" data-es="🇬🇧 Inglés — Avanzado" data-en="🇬🇧 English — Advanced">🇬🇧 Inglés — Avanzado</span>
+                <span class="ltag lang-tag-es"><svg class="flag-mini" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#c60b1e"/><rect y="3.5" width="20" height="7" fill="#ffc400"/></svg> <span data-es="Español — Nativo" data-en="Spanish — Native">Español — Nativo</span></span>
+                <span class="ltag lang-tag-gb"><svg class="flag-mini" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="white" stroke-width="3"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.5"/><path d="M10,0 L10,14 M0,7 L20,7" stroke="white" stroke-width="4"/><path d="M10,0 L10,14 M0,7 L20,7" stroke="#C8102E" stroke-width="2.5"/></svg> <span data-es="Inglés — Avanzado" data-en="English — Advanced">Inglés — Avanzado</span></span>
               </div>
             </div>
           </div>
@@ -412,14 +567,14 @@
     <section id="habilidades">
       <div class="section-inner">
         <div class="section-label" data-es="Habilidades" data-en="Skills">Habilidades</div>
-        <h2 class="section-title fade-in" data-es="Tecnologías" data-en="Technologies">Tecnologías</h2>
+        <h2 class="section-title fade-in clip-reveal" data-es="Tecnologías" data-en="Technologies">Tecnologías</h2>
         <div class="skills-grid">
-          <div class="skill-card fade-in"><div class="skill-icon">🌐</div><div class="skill-name">HTML & CSS</div><div class="skill-desc" data-es="Maquetación semántica, diseño responsive y animaciones." data-en="Semantic markup, responsive design and animations.">Maquetación semántica, diseño responsive y animaciones.</div><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
-          <div class="skill-card fade-in"><div class="skill-icon">✨</div><div class="skill-name">JavaScript</div><div class="skill-desc" data-es="Interactividad frontend, DOM y lógica dinámica." data-en="Frontend interactivity, DOM manipulation and dynamic logic.">Interactividad frontend, DOM y lógica dinámica.</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
-          <div class="skill-card fade-in"><div class="skill-icon">⚙️</div><div class="skill-name">PHP</div><div class="skill-desc" data-es="Plugins personalizados y lógica de servidor." data-en="Custom plugins and server-side logic.">Plugins personalizados y lógica de servidor.</div><div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div></div>
-          <div class="skill-card fade-in"><div class="skill-icon">🔷</div><div class="skill-name">WordPress</div><div class="skill-desc" data-es="Plugins, temas personalizados y ecosistemas completos." data-en="Plugins, custom themes and complete ecosystems.">Plugins, temas personalizados y ecosistemas completos.</div><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
-          <div class="skill-card fade-in"><div class="skill-icon">🗄️</div><div class="skill-name">MySQL</div><div class="skill-desc" data-es="Diseño de bases de datos y consultas SQL." data-en="Database design and SQL queries.">Diseño de bases de datos y consultas SQL.</div><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
-          <div class="skill-card fade-in"><div class="skill-icon">🛠️</div><div class="skill-name" data-es="Herramientas" data-en="Tools">Herramientas</div><div class="skill-desc" data-es="XAMPP, FileZilla, Git, Cloudflare y hosting." data-en="XAMPP, FileZilla, Git, Cloudflare and hosting.">XAMPP, FileZilla, Git, Cloudflare y hosting.</div><div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">🌐</div><div class="skill-name">HTML & CSS</div><div class="skill-desc" data-es="Maquetación semántica, diseño responsive y animaciones." data-en="Semantic markup, responsive design and animations.">Maquetación semántica, diseño responsive y animaciones.</div><div class="skill-bar"><div class="skill-fill" style="--bar-w:85%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">✨</div><div class="skill-name">JavaScript</div><div class="skill-desc" data-es="Interactividad frontend, DOM y lógica dinámica." data-en="Frontend interactivity, DOM manipulation and dynamic logic.">Interactividad frontend, DOM y lógica dinámica.</div><div class="skill-bar"><div class="skill-fill" style="--bar-w:65%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">⚙️</div><div class="skill-name">PHP</div><div class="skill-desc" data-es="Plugins personalizados y lógica de servidor." data-en="Custom plugins and server-side logic.">Plugins personalizados y lógica de servidor.</div><div class="skill-bar"><div class="skill-fill" style="--bar-w:75%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">🔷</div><div class="skill-name">WordPress</div><div class="skill-desc" data-es="Plugins, temas personalizados y ecosistemas completos." data-en="Plugins, custom themes and complete ecosystems.">Plugins, temas personalizados y ecosistemas completos.</div><div class="skill-bar"><div class="skill-fill" style="--bar-w:80%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">🗄️</div><div class="skill-name">MySQL</div><div class="skill-desc" data-es="Diseño de bases de datos y consultas SQL." data-en="Database design and SQL queries.">Diseño de bases de datos y consultas SQL.</div><div class="skill-bar"><div class="skill-fill" style="--bar-w:70%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">🛠️</div><div class="skill-name" data-es="Herramientas" data-en="Tools">Herramientas</div><div class="skill-desc" data-es="XAMPP, FileZilla, Git, Cloudflare y hosting." data-en="XAMPP, FileZilla, Git, Cloudflare and hosting.">XAMPP, FileZilla, Git, Cloudflare y hosting.</div><div class="skill-bar"><div class="skill-fill" style="--bar-w:72%"></div></div></div>
         </div>
       </div>
     </section>
@@ -521,7 +676,7 @@
           <h2 class="section-title fade-in" data-es="Hablemos" data-en="Let's talk">Hablemos</h2>
           <p class="fade-in" data-es="¿Tienes un proyecto en mente o quieres saber más sobre mi trabajo? Estoy disponible y con ganas de nuevos retos." data-en="Have a project in mind or want to know more about my work? I'm available and ready for new challenges.">¿Tienes un proyecto en mente o quieres saber más sobre mi trabajo? Estoy disponible y con ganas de nuevos retos.</p>
           <div class="contacto-links fade-in">
-            <a href="mailto:d.navarrofernandez@gmail.com" class="contacto-link">📧 d.navarrofernandez@gmail.com</a>
+            <a href="/cdn-cgi/l/email-protection#42266c2c23342330302d2427302c232c26273802252f232b2e6c212d2f" class="contacto-link">📧 <span class="__cf_email__" data-cfemail="e682c88887908794948980839488878882839ca6818b878f8ac885898b">[email&#160;protected]</span></a>
             <a href="tel:651562319" class="contacto-link">📱 651 562 319</a>
             <a href="https://instagram.com/danniel_navarro_" target="_blank" class="contacto-link">📸 @danniel_navarro_</a>
           </div>
@@ -534,7 +689,7 @@
     </footer>
   </div>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // PARTICLES
     const container = document.getElementById('particles');
     for (let i = 0; i < 30; i++) {
@@ -590,11 +745,199 @@
     const sections = document.querySelectorAll('section[id]');
     window.addEventListener('scroll', () => {
       let current = '';
-      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id'); });
+      sections.forEach(s => { if (window.scrollY + 120 >= s.offsetTop) current = s.id; });
       document.querySelectorAll('.nav-links a').forEach(a => {
-        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--text)' : '';
+        a.classList.remove('active');
+        if (a.getAttribute('href') === '#' + current) a.classList.add('active');
       });
     });
+
+    // ===================== CUSTOM CURSOR =====================
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; });
+    function animRing() { rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing); }
+    animRing();
+
+    // ===================== SCROLL PROGRESS =====================
+    const progressBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      progressBar.style.width = (window.scrollY / total * 100) + '%';
+    });
+
+    // ===================== TILT 3D CARDS =====================
+    function addTilt(selector) {
+      document.querySelectorAll(selector).forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          card.style.transform = `perspective(600px) rotateY(${x * 14}deg) rotateX(${-y * 14}deg) translateY(-5px) scale(1.02)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+      });
+    }
+    addTilt('.skill-card');
+    addTilt('.exp-card');
+    addTilt('.stat-card');
+
+    // ===================== SKILL BAR ANIMATION =====================
+    const barObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('bar-animated')) {
+          setTimeout(() => entry.target.classList.add('bar-animated'), 200);
+        }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.skill-card').forEach(c => barObs.observe(c));
+
+    // ===================== ANIMATED STAT COUNTERS =====================
+    function animateCount(el, target, suffix) {
+      let start = 0;
+      const isFloat = target.toString().includes('.');
+      const inc = isFloat ? 0.1 : (target > 10 ? 1 : 1);
+      const duration = 1200;
+      const steps = Math.abs(target) / inc;
+      const delay = duration / steps;
+      const timer = setInterval(() => {
+        start += inc;
+        if (start >= target) { start = target; clearInterval(timer); }
+        el.textContent = isFloat ? start.toFixed(1) : Math.round(start);
+        if (suffix) el.textContent += suffix;
+      }, delay);
+    }
+
+    const statObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const numEl = entry.target.querySelector('.stat-number');
+        if (!numEl || numEl.dataset.animated) return;
+        numEl.dataset.animated = '1';
+        const text = numEl.textContent.trim();
+        const num = parseFloat(text);
+        const suffix = text.replace(/[\d.]/g, '');
+        animateCount(numEl, num, suffix);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.stat-card').forEach(c => statObs.observe(c));
+
+    // ===================== TYPING EFFECT =====================
+    const typingEl = document.getElementById('typing-text');
+    const phrases = {
+      es: ['Desarrollador Web', 'Apasionado por la Ciberseguridad', 'Desarrollador de Apps Multiplataforma', 'Siempre aprendiendo 🚀'],
+      en: ['Web Developer', 'Cybersecurity Enthusiast', 'Cross-Platform App Developer', 'Always learning 🚀']
+    };
+    let phraseIdx = 0, charIdx = 0, deleting = false, typingTimeout;
+
+    function type() {
+      const list = phrases[currentLang] || phrases.es;
+      const current = list[phraseIdx % list.length];
+      if (!deleting) {
+        typingEl.textContent = current.slice(0, ++charIdx);
+        if (charIdx >= current.length) { deleting = true; typingTimeout = setTimeout(type, 1800); return; }
+      } else {
+        typingEl.textContent = current.slice(0, --charIdx);
+        if (charIdx === 0) { deleting = false; phraseIdx++; }
+      }
+      typingTimeout = setTimeout(type, deleting ? 45 : 85);
+    }
+
+    // ===================== RIPPLE EFFECT =====================
+    document.querySelectorAll('.ripple-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const r = btn.getBoundingClientRect();
+        const size = Math.max(r.width, r.height) * 2;
+        const circle = document.createElement('span');
+        circle.className = 'ripple-circle';
+        circle.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px;`;
+        btn.appendChild(circle);
+        setTimeout(() => circle.remove(), 700);
+      });
+    });
+
+    // Start typing after lang select
+    const origSelectLang = selectLang;
+    selectLang = function(lang) {
+      origSelectLang(lang);
+      clearTimeout(typingTimeout);
+      phraseIdx = 0; charIdx = 0; deleting = false;
+      setTimeout(type, 1200);
+    };
+
+    // ===================== HERO FLOATING PARTICLES =====================
+    const heroParticles = document.getElementById('hero-particles');
+    for (let i = 0; i < 18; i++) {
+      const hp = document.createElement('div');
+      hp.className = 'hparticle';
+      const size = Math.random() * 6 + 2;
+      const colors = ['rgba(124,111,255,0.5)', 'rgba(0,212,255,0.5)', 'rgba(255,107,157,0.4)'];
+      hp.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        animation-duration:${Math.random()*4+3}s;
+        animation-delay:${Math.random()*4}s;
+        filter: blur(${Math.random()*2}px);
+      `;
+      heroParticles.appendChild(hp);
+    }
+
+    // ===================== CARD SHINE (mouse position) =====================
+    document.querySelectorAll('.skill-card, .exp-card, .project-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+        const y = ((e.clientY - r.top) / r.height * 100).toFixed(1);
+        card.style.setProperty('--mx', x + '%');
+        card.style.setProperty('--my', y + '%');
+      });
+    });
+
+    // ===================== MAGNETIC NAV LINKS =====================
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('mousemove', e => {
+        const r = link.getBoundingClientRect();
+        const dx = (e.clientX - r.left - r.width/2) * 0.35;
+        const dy = (e.clientY - r.top - r.height/2) * 0.35;
+        link.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+      link.addEventListener('mouseleave', () => { link.style.transform = ''; });
+    });
+
+    // ===================== AVATAR PARALLAX =====================
+    const avatar = document.querySelector('.hero-avatar-wrap');
+    if (avatar) {
+      document.addEventListener('mousemove', e => {
+        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+        const dx = (e.clientX - cx) / cx * 12;
+        const dy = (e.clientY - cy) / cy * 12;
+        avatar.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+    }
+
+    // ===================== SCROLL-TRIGGERED CLIP REVEALS =====================
+    const clipObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.clip-reveal').forEach(el => clipObs.observe(el));
+
+    // ===================== PROJECT CARD IMAGE PARALLAX =====================
+    document.querySelectorAll('.project-card').forEach(card => {
+      const img = card.querySelector('.project-img');
+      if (!img) return;
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        img.style.transform = `translateY(${y * -12}px)`;
+      });
+      card.addEventListener('mouseleave', () => { img.style.transform = ''; });
+    });
+
   </script>
 </body>
 </html>
