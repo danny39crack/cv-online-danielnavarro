@@ -273,7 +273,63 @@
     .fade-in { opacity: 0; transform: translateY(25px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-    /* ===================== CUSTOM CURSOR ===================== */
+    /* ===================== EASTER EGG — HACKER MODE ===================== */
+    #easter-overlay {
+      position: fixed; inset: 0; z-index: 99997;
+      background: rgba(0,0,0,0.92);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    #easter-overlay.active { opacity: 1; pointer-events: all; }
+    #matrix-canvas { position: absolute; inset: 0; opacity: 0.35; }
+    .easter-msg {
+      position: relative; z-index: 2;
+      font-family: 'Courier New', monospace;
+      color: #00ff41;
+      text-align: center;
+      text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
+      animation: easter-flicker 0.15s infinite alternate;
+    }
+    .easter-msg .easter-title {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+    .easter-msg .easter-sub {
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      color: #00cc33;
+      opacity: 0.85;
+      margin-bottom: 0.5rem;
+    }
+    .easter-msg .easter-close {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      color: #007a1f;
+      animation: none;
+    }
+    .easter-msg .easter-cursor {
+      display: inline-block;
+      width: 10px; height: 1.1em;
+      background: #00ff41;
+      vertical-align: middle;
+      margin-left: 4px;
+      animation: cursor-blink 0.6s step-end infinite;
+    }
+    @keyframes easter-flicker {
+      from { text-shadow: 0 0 15px #00ff41, 0 0 30px #00ff41; }
+      to   { text-shadow: 0 0 25px #00ff41, 0 0 60px #00ff41, 0 0 80px #00cc33; }
+    }
+    /* glitch on body when active */
+    body.hacker-mode #main-site { animation: body-glitch 0.2s steps(2) infinite; }
+    @keyframes body-glitch {
+      0%   { filter: hue-rotate(0deg); }
+      33%  { filter: hue-rotate(90deg) saturate(2); }
+      66%  { filter: hue-rotate(180deg); }
+      100% { filter: hue-rotate(0deg); }
+    }
     * { cursor: none; }
     @media (hover: none) { * { cursor: auto; } }
     #cursor-dot {
@@ -488,6 +544,18 @@
     <div class="aurora-blob"></div>
   </div>
 
+  <!-- Easter Egg overlay -->
+  <div id="easter-overlay">
+    <canvas id="matrix-canvas"></canvas>
+    <div class="easter-msg">
+      <div class="easter-title">&gt; ACCESO CONCEDIDO<span class="easter-cursor"></span></div>
+      <div class="easter-sub">// Hola, hacker. Sabía que alguien lo encontraría.</div>
+      <div class="easter-sub">// Escribe "hack" para activar. Ya lo sabías, ¿verdad?</div>
+      <div class="easter-sub" style="margin-top:0.8rem;">// — Daniel Navarro · Cybersecurity enthusiast</div>
+      <div class="easter-close">[ ESC o clic para salir ]</div>
+    </div>
+  </div>
+
   <!-- ==================== LANGUAGE SCREEN ==================== -->
   <div id="lang-screen">
     <div class="lang-screen-bg"></div>
@@ -547,7 +615,7 @@
           <button class="lang-switch-btn active" id="btn-es" onclick="switchLang('es')">ES</button>
           <button class="lang-switch-btn" id="btn-en" onclick="switchLang('en')">EN</button>
         </div>
-        <a href="Currículum_Daniel_Navarro.pdf" download="CV_Daniel_Navarro.pdf" class="btn-download ripple-btn">
+        <a href="CV_Daniel_Navarro.pdf" download="CV_Daniel_Navarro.pdf" class="btn-download ripple-btn">
           <span class="dl-icon">⬇</span>
           <span data-es="Descargar CV" data-en="Download CV">Descargar CV</span>
         </a>
@@ -727,7 +795,7 @@
             <a href="tel:651562319" class="contacto-link">📱 651 562 319</a>
             <a href="https://instagram.com/danniel_navarro_" target="_blank" class="contacto-link">📸 @danniel_navarro_</a>
           </div>
-          <a href="Currículum_Daniel_Navarro.pdf" download="CV_Daniel_Navarro.pdf" class="btn-download-big ripple-btn fade-in">
+          <a href="CV_Daniel_Navarro.pdf" download="CV_Daniel_Navarro.pdf" class="btn-download-big ripple-btn fade-in">
             <span class="dl-icon-big">⬇</span>
             <span data-es="Descargar mi CV en PDF" data-en="Download my CV (PDF)">Descargar mi CV en PDF</span>
           </a>
@@ -988,6 +1056,83 @@
       });
       card.addEventListener('mouseleave', () => { img.style.transform = ''; });
     });
+
+    // ===================== EASTER EGG — HACKER MODE =====================
+    (function() {
+      const secret = 'hack';
+      let typed = '';
+      let easterActive = false;
+      let matrixInterval = null;
+
+      const overlay = document.getElementById('easter-overlay');
+      const canvas  = document.getElementById('matrix-canvas');
+      const ctx     = canvas.getContext('2d');
+
+      function resizeCanvas() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Matrix rain
+      const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ0123456789ABCDEF<>{}[]|/\\hack';
+      let drops = [];
+
+      function initDrops() {
+        const cols = Math.floor(canvas.width / 16);
+        drops = Array.from({ length: cols }, () => Math.random() * -50);
+      }
+
+      function drawMatrix() {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#00ff41';
+        ctx.font = '14px Courier New';
+        drops.forEach((y, i) => {
+          const ch = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillStyle = i % 7 === 0 ? '#ffffff' : '#00ff41';
+          ctx.fillText(ch, i * 16, y * 16);
+          if (y * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        });
+      }
+
+      function activateEaster() {
+        if (easterActive) return;
+        easterActive = true;
+        resizeCanvas();
+        initDrops();
+        overlay.classList.add('active');
+        document.body.classList.add('hacker-mode');
+        matrixInterval = setInterval(drawMatrix, 40);
+        // auto-close after 12s
+        setTimeout(deactivateEaster, 12000);
+      }
+
+      function deactivateEaster() {
+        if (!easterActive) return;
+        easterActive = false;
+        overlay.classList.remove('active');
+        document.body.classList.remove('hacker-mode');
+        clearInterval(matrixInterval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        typed = '';
+      }
+
+      // Listen for keystrokes anywhere on page
+      document.addEventListener('keydown', e => {
+        // don't fire if user is typing in an input
+        if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+        if (e.key === 'Escape') { deactivateEaster(); return; }
+        typed += e.key.toLowerCase();
+        if (typed.length > secret.length) typed = typed.slice(-secret.length);
+        if (typed === secret) activateEaster();
+      });
+
+      // Click overlay to close
+      overlay.addEventListener('click', deactivateEaster);
+    })();
 
   </script>
 </body>
