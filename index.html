@@ -8,57 +8,79 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0a0a0f; --bg2: #111118; --bg3: #1a1a24;
-      --accent: #6c63ff; --accent3: #43e8d8;
-      --text: #e8e8f0; --muted: #7a7a9a;
-      --border: rgba(108,99,255,0.15);
+      --bg: #0d0d1a;
+      --bg2: #12122a;
+      --bg3: #1a1a3a;
+      --accent: #7c6fff;
+      --accent2: #ff6b9d;
+      --accent3: #00d4ff;
+      --text: #f0f0ff;
+      --muted: #8888bb;
+      --border: rgba(124,111,255,0.2);
+      --card: rgba(255,255,255,0.04);
     }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; line-height: 1.7; overflow-x: hidden; }
 
-    /* ===================== LANGUAGE SELECTOR ===================== */
+    /* GRADIENT BG */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(124,111,255,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,212,255,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 60% 30%, rgba(255,107,157,0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===================== LANGUAGE SCREEN ===================== */
     #lang-screen {
       position: fixed; inset: 0; z-index: 9999;
       background: var(--bg);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      gap: 3rem;
+      gap: 3.5rem;
       transition: opacity 0.8s ease, transform 0.8s ease;
     }
+    #lang-screen.hide { opacity: 0; transform: scale(1.04); pointer-events: none; }
 
-    #lang-screen.hide {
-      opacity: 0;
-      transform: scale(1.05);
+    .lang-screen-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, rgba(124,111,255,0.2) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 60% at 80% 70%, rgba(0,212,255,0.15) 0%, transparent 60%);
       pointer-events: none;
     }
 
     .lang-title {
       font-family: 'Syne', sans-serif;
-      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--muted);
       text-align: center;
       animation: fadeUp 0.8s ease 0.2s both;
+      position: relative; z-index: 1;
     }
-
     .lang-title span {
       background: linear-gradient(135deg, var(--accent), var(--accent3));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
     .lang-options {
-      display: flex;
-      gap: 2rem;
+      display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;
       animation: fadeUp 0.8s ease 0.5s both;
+      position: relative; z-index: 1;
     }
 
     .lang-btn {
       position: relative;
-      width: 180px; height: 220px;
+      width: 200px; height: 240px;
       border: 1px solid var(--border);
-      border-radius: 20px;
-      background: var(--bg2);
+      border-radius: 24px;
+      background: var(--card);
+      backdrop-filter: blur(20px);
       cursor: pointer;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -66,256 +88,204 @@
       transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       overflow: hidden;
     }
-
     .lang-btn::before {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(108,99,255,0.08), rgba(67,232,216,0.05));
-      opacity: 0;
-      transition: opacity 0.3s;
+      background: linear-gradient(135deg, rgba(124,111,255,0.12), rgba(0,212,255,0.08));
+      opacity: 0; transition: opacity 0.3s;
     }
-
-    .lang-btn:hover {
-      transform: translateY(-10px) scale(1.04);
-      border-color: var(--accent);
-      box-shadow: 0 20px 60px rgba(108,99,255,0.25);
-    }
-
+    .lang-btn:hover { transform: translateY(-12px) scale(1.05); border-color: var(--accent); box-shadow: 0 30px 80px rgba(124,111,255,0.3); }
     .lang-btn:hover::before { opacity: 1; }
 
-    .lang-flag {
-      font-size: 4rem;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-      transition: transform 0.3s;
-    }
+    .lang-flag-wrap { font-size: 0; position: relative; z-index: 1; }
+    .lang-flag-wrap svg { width: 72px; height: 72px; border-radius: 50%; box-shadow: 0 8px 30px rgba(0,0,0,0.4); transition: transform 0.3s; }
+    .lang-btn:hover .lang-flag-wrap svg { transform: scale(1.15) rotate(-4deg); }
 
-    .lang-btn:hover .lang-flag { transform: scale(1.15) rotate(-3deg); }
-
-    .lang-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .lang-sub {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .lang-arrow {
-      font-size: 0.9rem;
-      color: var(--accent);
-      opacity: 0;
-      transform: translateY(4px);
-      transition: all 0.3s;
-    }
-
+    .lang-name { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--text); position: relative; z-index: 1; }
+    .lang-sub { font-size: 0.8rem; color: var(--muted); position: relative; z-index: 1; }
+    .lang-arrow { font-size: 0.85rem; color: var(--accent); opacity: 0; transform: translateY(6px); transition: all 0.3s; position: relative; z-index: 1; }
     .lang-btn:hover .lang-arrow { opacity: 1; transform: translateY(0); }
 
     /* particles */
-    .lang-particles {
-      position: absolute; inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .particle {
-      position: absolute;
-      width: 2px; height: 2px;
-      background: var(--accent);
-      border-radius: 50%;
-      animation: float linear infinite;
-      opacity: 0;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(100vh) scale(0); opacity: 0; }
-      10% { opacity: 0.6; }
-      90% { opacity: 0.3; }
-      100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .lang-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .particle { position: absolute; border-radius: 50%; animation: float linear infinite; opacity: 0; }
+    @keyframes float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 10% { opacity: 0.5; } 90% { opacity: 0.2; } 100% { transform: translateY(-10vh) scale(2); opacity: 0; } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
     /* ===================== MAIN SITE ===================== */
-    #main-site {
-      opacity: 0;
-      transition: opacity 0.8s ease 0.3s;
-    }
-
+    #main-site { opacity: 0; transition: opacity 0.8s ease 0.3s; }
     #main-site.visible { opacity: 1; }
 
     /* NAV */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; justify-content: space-between; align-items: center;
-      padding: 1.2rem 4rem;
-      background: rgba(10,10,15,0.85);
-      backdrop-filter: blur(20px);
+      padding: 1rem 5%;
+      background: rgba(13,13,26,0.8);
+      backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
     }
-
     .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--text); text-decoration: none; }
     .nav-logo span { color: var(--accent); }
-
     .nav-right { display: flex; align-items: center; gap: 2rem; }
-
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; position: relative; }
     .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--accent); transition: width 0.3s; }
     .nav-links a:hover { color: var(--text); }
     .nav-links a:hover::after { width: 100%; }
-
-    /* LANG SWITCHER in nav */
-    .lang-switcher {
-      display: flex;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 3px;
-      gap: 2px;
-    }
-
-    .lang-switch-btn {
-      padding: 0.3rem 0.8rem;
-      border-radius: 100px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      transition: all 0.25s;
-      letter-spacing: 0.03em;
-    }
-
-    .lang-switch-btn.active {
-      background: var(--accent);
-      color: white;
-    }
-
+    .lang-switcher { display: flex; background: var(--bg3); border: 1px solid var(--border); border-radius: 100px; padding: 3px; gap: 2px; }
+    .lang-switch-btn { padding: 0.28rem 0.85rem; border-radius: 100px; border: none; background: transparent; color: var(--muted); font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.25s; letter-spacing: 0.05em; }
+    .lang-switch-btn.active { background: var(--accent); color: white; }
     .lang-switch-btn:not(.active):hover { color: var(--text); }
 
+    /* WRAPPER */
+    .container { max-width: 1200px; margin: 0 auto; width: 100%; }
+
     /* HERO */
-    #hero { min-height: 100vh; display: flex; align-items: center; padding: 8rem 4rem 4rem; position: relative; overflow: hidden; }
-    .hero-glow { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(108,99,255,0.12) 0%, transparent 70%); top: 50%; left: 60%; transform: translate(-50%, -50%); pointer-events: none; }
-    .hero-glow2 { position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(67,232,216,0.08) 0%, transparent 70%); top: 20%; left: 20%; pointer-events: none; }
-    .hero-content { position: relative; z-index: 1; max-width: 700px; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.3); color: var(--accent); font-size: 0.8rem; font-weight: 500; padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 2rem; letter-spacing: 0.05em; text-transform: uppercase; }
-    .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--accent3); border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
-    .hero-name { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800; line-height: 1.0; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 8rem 5% 5rem;
+      position: relative; z-index: 1;
+      text-align: center;
+    }
+    .hero-inner { display: flex; flex-direction: column; align-items: center; max-width: 800px; margin: 0 auto; }
+    .hero-avatar-wrap {
+      width: 130px; height: 130px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--bg3), var(--bg2));
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+      margin-bottom: 2rem;
+      position: relative;
+      box-shadow: 0 0 0 8px rgba(124,111,255,0.08), 0 0 60px rgba(124,111,255,0.2);
+    }
+    .hero-avatar-wrap::before {
+      content: '';
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(124,111,255,0.3);
+      animation: pulse-ring 3s ease infinite;
+    }
+    @keyframes pulse-ring { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.08); opacity: 0.15; } }
+
+    .hero-tag { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(124,111,255,0.1); border: 1px solid rgba(124,111,255,0.3); color: var(--accent); font-size: 0.78rem; font-weight: 500; padding: 0.35rem 1rem; border-radius: 100px; margin-bottom: 1.5rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--accent3); border-radius: 50%; animation: blink 2s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .hero-name { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 8vw, 6rem); font-weight: 800; line-height: 1.0; letter-spacing: -0.03em; margin-bottom: 0.75rem; }
     .hero-name .highlight { background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero-role { font-family: 'Syne', sans-serif; font-size: clamp(1rem, 2.5vw, 1.35rem); font-weight: 600; color: var(--muted); margin-bottom: 1.5rem; }
-    .hero-desc { font-size: 1.05rem; color: var(--muted); max-width: 520px; margin-bottom: 2.5rem; font-weight: 300; }
-    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 500; text-decoration: none; transition: all 0.25s; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; }
-    .btn-primary { background: var(--accent); color: white; }
-    .btn-primary:hover { background: #7c75ff; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,99,255,0.35); }
+
+    .hero-role { font-family: 'Syne', sans-serif; font-size: clamp(1rem, 2.5vw, 1.3rem); font-weight: 600; color: var(--muted); margin-bottom: 1.5rem; }
+    .hero-desc { font-size: 1rem; color: var(--muted); max-width: 560px; margin: 0 auto 2.5rem; font-weight: 300; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 2rem; border-radius: 10px; font-size: 0.95rem; font-weight: 500; text-decoration: none; transition: all 0.25s; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #9b6fff); color: white; box-shadow: 0 4px 20px rgba(124,111,255,0.35); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 35px rgba(124,111,255,0.5); }
     .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-    .hero-avatar { position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); z-index: 1; }
-    .avatar-ring { width: 300px; height: 300px; border-radius: 50%; border: 2px solid rgba(108,99,255,0.3); display: flex; align-items: center; justify-content: center; position: relative; animation: rotate 20s linear infinite; }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .avatar-ring::before { content: ''; position: absolute; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; top: -6px; left: 50%; transform: translateX(-50%); box-shadow: 0 0 15px var(--accent); }
-    .avatar-inner { width: 255px; height: 255px; border-radius: 50%; background: linear-gradient(135deg, var(--bg3), var(--bg2)); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; animation: rotate 20s linear infinite reverse; font-size: 6.5rem; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
 
     /* SECTIONS */
-    section { padding: 6rem 4rem; position: relative; z-index: 1; }
-    .section-label { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; color: var(--accent); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
-    .section-label::before { content: ''; width: 30px; height: 1px; background: var(--accent); }
-    .section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 3rem; line-height: 1.1; }
+    section { padding: 6rem 5%; position: relative; z-index: 1; }
+    section:nth-child(even) { background: rgba(255,255,255,0.02); }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; color: var(--accent); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; }
+    .section-label::before { content: ''; width: 28px; height: 1px; background: linear-gradient(90deg, var(--accent), var(--accent3)); }
+    .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 3rem; }
 
-    #sobre-mi { background: var(--bg2); }
-    .sobre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; max-width: 1100px; }
-    .sobre-text p { color: var(--muted); margin-bottom: 1.2rem; font-size: 1.05rem; }
+    /* SOBRE MI */
+    .sobre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+    .sobre-text p { color: var(--muted); margin-bottom: 1.2rem; font-size: 1rem; }
     .sobre-text p strong { color: var(--text); }
     .sobre-right { display: flex; flex-direction: column; gap: 1.2rem; }
     .sobre-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .stat-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; transition: border-color 0.3s; }
-    .stat-card:hover { border-color: var(--accent); }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; transition: all 0.3s; backdrop-filter: blur(10px); }
+    .stat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(124,111,255,0.15); }
     .stat-number { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .stat-label { color: var(--muted); font-size: 0.82rem; }
-    .tags-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; }
-    .tags-box-title { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.9rem; }
+    .tags-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.4rem; backdrop-filter: blur(10px); }
+    .tags-box-title { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.9rem; }
     .tags-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .ftag { background: rgba(108,99,255,0.08); border: 1px solid rgba(108,99,255,0.2); color: var(--text); font-size: 0.82rem; padding: 0.3rem 0.85rem; border-radius: 100px; }
-    .lang-tag { background: rgba(67,232,216,0.08); border: 1px solid rgba(67,232,216,0.2); color: var(--accent3); font-size: 0.82rem; padding: 0.3rem 0.85rem; border-radius: 100px; }
+    .ftag { background: rgba(124,111,255,0.1); border: 1px solid rgba(124,111,255,0.2); color: var(--text); font-size: 0.82rem; padding: 0.3rem 0.85rem; border-radius: 100px; }
+    .ltag { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); color: var(--accent3); font-size: 0.82rem; padding: 0.3rem 0.85rem; border-radius: 100px; }
 
-    #habilidades { background: var(--bg); }
-    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.5rem; max-width: 1100px; }
-    .skill-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.8rem; transition: all 0.3s; position: relative; overflow: hidden; }
+    /* SKILLS */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+    .skill-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 1.8rem; transition: all 0.3s; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
     .skill-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent3)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
-    .skill-card:hover { border-color: rgba(108,99,255,0.4); transform: translateY(-4px); }
+    .skill-card:hover { border-color: rgba(124,111,255,0.5); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(124,111,255,0.15); }
     .skill-card:hover::before { transform: scaleX(1); }
-    .skill-icon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+    .skill-icon { font-size: 2rem; margin-bottom: 0.9rem; }
     .skill-name { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
     .skill-desc { color: var(--muted); font-size: 0.87rem; }
-    .skill-bar { margin-top: 1rem; height: 4px; background: var(--bg3); border-radius: 100px; overflow: hidden; }
+    .skill-bar { margin-top: 1.1rem; height: 4px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
     .skill-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--accent), var(--accent3)); }
 
-    #experiencia { background: var(--bg2); }
-    .exp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; max-width: 1100px; }
-    .exp-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: all 0.3s; }
-    .exp-card:hover { border-color: rgba(108,99,255,0.4); transform: translateY(-4px); }
+    /* EXPERIENCIA */
+    .exp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .exp-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; transition: all 0.3s; backdrop-filter: blur(10px); position: relative; overflow: hidden; }
+    .exp-card::after { content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px; background: radial-gradient(circle at top right, rgba(0,212,255,0.1), transparent); border-radius: 0 20px 0 100%; }
+    .exp-card:hover { border-color: rgba(124,111,255,0.4); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(124,111,255,0.15); }
     .exp-company { font-size: 0.78rem; font-weight: 600; color: var(--accent3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
     .exp-role { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; }
     .exp-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
     .exp-list li { color: var(--muted); font-size: 0.9rem; padding-left: 1.2rem; position: relative; }
     .exp-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
 
-    #proyectos { background: var(--bg); }
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem; max-width: 1100px; }
-    .project-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all 0.3s; }
-    .project-card:hover { transform: translateY(-6px); border-color: rgba(108,99,255,0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-    .project-img { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
-    .project-img-barbershop { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
+    /* PROYECTOS */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem; }
+    .project-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; transition: all 0.3s; backdrop-filter: blur(10px); }
+    .project-card:hover { transform: translateY(-8px); border-color: rgba(124,111,255,0.4); box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
+    .project-img { height: 190px; display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; overflow: hidden; }
+    .project-img-barbershop { background: linear-gradient(135deg, #0f0f2e, #1a0a3a, #0a1a4a); }
+    .project-img-barbershop::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(124,111,255,0.2), transparent); }
     .project-body { padding: 1.5rem; }
     .project-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .tag { background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.2); color: var(--accent); font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 100px; font-weight: 500; }
+    .tag { background: rgba(124,111,255,0.12); border: 1px solid rgba(124,111,255,0.25); color: var(--accent); font-size: 0.75rem; padding: 0.25rem 0.75rem; border-radius: 100px; font-weight: 500; }
     .project-title { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; }
     .project-desc { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
-    .project-links { display: flex; gap: 1rem; }
-    .project-link { color: var(--accent); text-decoration: none; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.3rem; transition: gap 0.2s; }
+    .project-link { color: var(--accent); text-decoration: none; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.3rem; transition: gap 0.2s; }
     .project-link:hover { gap: 0.6rem; }
 
-    #formacion { background: var(--bg2); }
-    .timeline { max-width: 700px; position: relative; }
+    /* FORMACION */
+    .timeline { max-width: 750px; position: relative; }
     .timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--accent), transparent); }
-    .timeline-item { padding: 0 0 2.5rem 4rem; position: relative; }
-    .timeline-dot { position: absolute; left: 12px; top: 6px; width: 17px; height: 17px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(108,99,255,0.4); }
-    .timeline-year { font-size: 0.78rem; color: var(--accent); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+    .timeline-item { padding: 0 0 2.5rem 4.5rem; position: relative; }
+    .timeline-dot { position: absolute; left: 12px; top: 6px; width: 17px; height: 17px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); box-shadow: 0 0 15px rgba(124,111,255,0.5); }
+    .timeline-year { font-size: 0.75rem; color: var(--accent); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
     .timeline-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.25rem; }
     .timeline-place { color: var(--muted); font-size: 0.87rem; margin-bottom: 0.4rem; }
     .timeline-desc { color: var(--muted); font-size: 0.87rem; }
 
-    #contacto { background: var(--bg); text-align: center; }
-    .contacto-inner { max-width: 600px; margin: 0 auto; }
+    /* CONTACTO */
+    #contacto { text-align: center; }
+    .contacto-inner { max-width: 640px; margin: 0 auto; }
     .contacto-inner p { color: var(--muted); font-size: 1.05rem; margin-bottom: 2.5rem; }
     .contacto-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-    .contacto-link { display: flex; align-items: center; gap: 0.75rem; background: var(--bg2); border: 1px solid var(--border); color: var(--text); text-decoration: none; padding: 0.9rem 1.4rem; border-radius: 12px; font-weight: 500; font-size: 0.88rem; transition: all 0.25s; }
-    .contacto-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
+    .contacto-link { display: flex; align-items: center; gap: 0.75rem; background: var(--card); border: 1px solid var(--border); color: var(--text); text-decoration: none; padding: 0.9rem 1.5rem; border-radius: 14px; font-weight: 500; font-size: 0.88rem; transition: all 0.25s; backdrop-filter: blur(10px); }
+    .contacto-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(124,111,255,0.2); }
 
-    footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); position: relative; z-index: 1; background: var(--bg); }
+    footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); position: relative; z-index: 1; }
 
-    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    /* ANIMATIONS */
+    .fade-in { opacity: 0; transform: translateY(25px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-    @media (max-width: 900px) {
-      nav { padding: 1rem 2rem; }
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
       .nav-links { display: none; }
-      #hero { padding: 7rem 2rem 4rem; }
-      .hero-avatar { display: none; }
-      section { padding: 4rem 2rem; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 5%; }
+      section { padding: 4rem 5%; }
       .sobre-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .exp-grid { grid-template-columns: 1fr; }
-      .lang-options { flex-direction: column; gap: 1.2rem; }
-      .lang-btn { width: 240px; height: 100px; flex-direction: row; padding: 0 2rem; }
+      .lang-options { gap: 1rem; }
+      .lang-btn { width: 160px; height: 200px; }
+    }
+    @media (max-width: 480px) {
+      .hero-btns { flex-direction: column; align-items: center; }
+      .contacto-links { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
@@ -323,17 +293,39 @@
 
   <!-- ==================== LANGUAGE SCREEN ==================== -->
   <div id="lang-screen">
+    <div class="lang-screen-bg"></div>
     <div class="lang-particles" id="particles"></div>
+
     <p class="lang-title">Elige tu idioma · <span>Choose your language</span></p>
+
     <div class="lang-options">
       <button class="lang-btn" onclick="selectLang('es')">
-        <div class="lang-flag">🇪🇸</div>
+        <div class="lang-flag-wrap">
+          <!-- Spain SVG flag -->
+          <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="36" cy="36" r="36" fill="#c60b1e"/>
+            <rect x="0" y="18" width="72" height="36" fill="#ffc400"/>
+            <rect x="0" y="18" width="72" height="9" fill="#c60b1e"/>
+            <rect x="0" y="45" width="72" height="9" fill="#c60b1e"/>
+          </svg>
+        </div>
         <div class="lang-name">Español</div>
         <div class="lang-sub">Versión en español</div>
         <div class="lang-arrow">Entrar →</div>
       </button>
+
       <button class="lang-btn" onclick="selectLang('en')">
-        <div class="lang-flag">🇬🇧</div>
+        <div class="lang-flag-wrap">
+          <!-- UK SVG flag -->
+          <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="36" cy="36" r="36" fill="#012169"/>
+            <path d="M0,36 L72,36 M36,0 L36,72" stroke="white" stroke-width="12"/>
+            <path d="M0,0 L72,72 M72,0 L0,72" stroke="white" stroke-width="8"/>
+            <path d="M0,0 L72,72 M72,0 L0,72" stroke="#C8102E" stroke-width="4"/>
+            <path d="M0,36 L72,36 M36,0 L36,72" stroke="#C8102E" stroke-width="7"/>
+            <circle cx="36" cy="36" r="36" fill="none" clip-path="circle(36px at 36px 36px)"/>
+          </svg>
+        </div>
         <div class="lang-name">English</div>
         <div class="lang-sub">English version</div>
         <div class="lang-arrow">Enter →</div>
@@ -363,69 +355,53 @@
 
     <!-- HERO -->
     <section id="hero">
-      <div class="hero-glow"></div>
-      <div class="hero-glow2"></div>
-      <div class="hero-content">
+      <div class="hero-inner">
+        <div class="hero-avatar-wrap">👨‍💻</div>
         <div class="hero-tag" data-es="Disponible para trabajar · Madrid" data-en="Available for work · Madrid">Disponible para trabajar · Madrid</div>
         <h1 class="hero-name">Daniel<br><span class="highlight">Navarro.</span></h1>
         <p class="hero-role" data-es="Desarrollador de Aplicaciones Web & Multiplataforma" data-en="Web & Cross-Platform Application Developer">Desarrollador de Aplicaciones Web & Multiplataforma</p>
-        <p class="hero-desc" data-es="Me apasiona crear soluciones web funcionales y bien diseñadas. Resolutivo, trabajador y con alta capacidad de aprendizaje. Interesado en desarrollo web y ciberseguridad." data-en="Passionate about building functional and well-designed web solutions. Problem-solver, hardworking, with a high learning capacity. Interested in web development and cybersecurity.">Me apasiona crear soluciones web funcionales y bien diseñadas. Resolutivo, trabajador y con alta capacidad de aprendizaje. Interesado en desarrollo web y ciberseguridad.</p>
+        <p class="hero-desc" data-es="Me apasiona crear soluciones web funcionales y bien diseñadas. Resolutivo, trabajador y con alta capacidad de aprendizaje. Interesado en desarrollo web y ciberseguridad." data-en="Passionate about building functional and well-designed web solutions. Problem-solver, hardworking, fast learner. Interested in web development and cybersecurity.">Me apasiona crear soluciones web funcionales y bien diseñadas. Resolutivo, trabajador y con alta capacidad de aprendizaje. Interesado en desarrollo web y ciberseguridad.</p>
         <div class="hero-btns">
           <a href="#proyectos" class="btn btn-primary" data-es="Ver proyectos →" data-en="View projects →">Ver proyectos →</a>
           <a href="#contacto" class="btn btn-outline" data-es="Contactar" data-en="Contact me">Contactar</a>
-        </div>
-      </div>
-      <div class="hero-avatar">
-        <div class="avatar-ring">
-          <div class="avatar-inner">👨‍💻</div>
         </div>
       </div>
     </section>
 
     <!-- SOBRE MI -->
     <section id="sobre-mi">
-      <div class="section-label" data-es="Sobre mí" data-en="About me">Sobre mí</div>
-      <h2 class="section-title fade-in" data-es="Quién soy" data-en="Who I am">Quién soy</h2>
-      <div class="sobre-grid">
-        <div class="sobre-text fade-in">
-          <p data-es="Soy <strong>Daniel Navarro</strong>, desarrollador web y de aplicaciones con base en <strong>Madrid</strong>. Actualmente cursando el Grado Superior en Desarrollo de Aplicaciones Web (DAW)." data-en="I'm <strong>Daniel Navarro</strong>, a web and application developer based in <strong>Madrid</strong>. Currently enrolled in the Higher Degree in Web Application Development (DAW).">Soy <strong>Daniel Navarro</strong>, desarrollador web y de aplicaciones con base en <strong>Madrid</strong>. Actualmente cursando el Grado Superior en Desarrollo de Aplicaciones Web (DAW).</p>
-          <p data-es="Cuento con experiencia real en empresas como <strong>500Cosmetic</strong>, donde trabajé tanto como Diseñador Web como Programador, desarrollando páginas de productos y aplicaciones internas." data-en="I have real-world experience at companies like <strong>500Cosmetic</strong>, where I worked as both a Web Designer and Programmer, building product pages and internal applications.">Cuento con experiencia real en empresas como <strong>500Cosmetic</strong>, donde trabajé tanto como Diseñador Web como Programador, desarrollando páginas de productos y aplicaciones internas.</p>
-          <p data-es="Me gusta trabajar en equipo y tengo gran interés en aprender cosas nuevas. Me encanta la <strong>ciberseguridad</strong> y es un campo que me gustaría explorar en profundidad en el futuro." data-en="I enjoy teamwork and have a strong interest in learning new things. I'm passionate about <strong>cybersecurity</strong> and would like to explore it in depth in the future.">Me gusta trabajar en equipo y tengo gran interés en aprender cosas nuevas. Me encanta la <strong>ciberseguridad</strong> y es un campo que me gustaría explorar en profundidad en el futuro.</p>
-        </div>
-        <div class="sobre-right fade-in">
-          <div class="sobre-stats">
-            <div class="stat-card">
-              <div class="stat-number">2+</div>
-              <div class="stat-label" data-es="Años de experiencia" data-en="Years of experience">Años de experiencia</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">5+</div>
-              <div class="stat-label" data-es="Tecnologías" data-en="Technologies">Tecnologías</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">2</div>
-              <div class="stat-label" data-es="Grados superiores" data-en="Higher degrees">Grados superiores</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">∞</div>
-              <div class="stat-label" data-es="Ganas de aprender" data-en="Eagerness to learn">Ganas de aprender</div>
-            </div>
+      <div class="section-inner">
+        <div class="section-label" data-es="Sobre mí" data-en="About me">Sobre mí</div>
+        <h2 class="section-title fade-in" data-es="Quién soy" data-en="Who I am">Quién soy</h2>
+        <div class="sobre-grid">
+          <div class="sobre-text fade-in">
+            <p data-es="Soy <strong>Daniel Navarro</strong>, desarrollador web y de aplicaciones con base en <strong>Madrid</strong>. Actualmente cursando el Grado Superior en Desarrollo de Aplicaciones Web (DAW)." data-en="I'm <strong>Daniel Navarro</strong>, a web and application developer based in <strong>Madrid</strong>. Currently enrolled in the Higher Degree in Web Application Development (DAW).">Soy <strong>Daniel Navarro</strong>, desarrollador web y de aplicaciones con base en <strong>Madrid</strong>. Actualmente cursando el Grado Superior en Desarrollo de Aplicaciones Web (DAW).</p>
+            <p data-es="Cuento con experiencia real en empresas como <strong>500Cosmetic</strong>, donde trabajé tanto como Diseñador Web como Programador, desarrollando páginas de productos y aplicaciones internas." data-en="I have real-world experience at companies like <strong>500Cosmetic</strong>, where I worked as both a Web Designer and Programmer, building product pages and internal applications.">Cuento con experiencia real en empresas como <strong>500Cosmetic</strong>, donde trabajé tanto como Diseñador Web como Programador, desarrollando páginas de productos y aplicaciones internas.</p>
+            <p data-es="Me gusta trabajar en equipo y tengo gran interés en aprender cosas nuevas. Me encanta la <strong>ciberseguridad</strong> y es un campo que me gustaría explorar en el futuro." data-en="I enjoy teamwork and have a strong interest in learning new things. I'm passionate about <strong>cybersecurity</strong> and would love to explore it further in the future.">Me gusta trabajar en equipo y tengo gran interés en aprender cosas nuevas. Me encanta la <strong>ciberseguridad</strong> y es un campo que me gustaría explorar en el futuro.</p>
           </div>
-          <div class="tags-box">
-            <div class="tags-box-title" data-es="Fortalezas" data-en="Strengths">Fortalezas</div>
-            <div class="tags-list">
-              <span class="ftag" data-es="Responsabilidad" data-en="Responsibility">Responsabilidad</span>
-              <span class="ftag" data-es="Creatividad" data-en="Creativity">Creatividad</span>
-              <span class="ftag" data-es="Perseverancia" data-en="Perseverance">Perseverancia</span>
-              <span class="ftag" data-es="Trabajo en equipo" data-en="Teamwork">Trabajo en equipo</span>
-              <span class="ftag" data-es="Alta capacidad de aprendizaje" data-en="Fast learner">Alta capacidad de aprendizaje</span>
+          <div class="sobre-right fade-in">
+            <div class="sobre-stats">
+              <div class="stat-card"><div class="stat-number">1</div><div class="stat-label" data-es="Año de experiencia" data-en="Years of experience">Años de experiencia</div></div>
+              <div class="stat-card"><div class="stat-number">5+</div><div class="stat-label" data-es="Tecnologías" data-en="Technologies">Tecnologías</div></div>
+              <div class="stat-card"><div class="stat-number">2</div><div class="stat-label" data-es="Grados superiores" data-en="Higher degrees">Grados superiores</div></div>
+              <div class="stat-card"><div class="stat-number">MUCHAS</div><div class="stat-label" data-es="Ganas de aprender" data-en="Eagerness to learn">Ganas de aprender</div></div>
             </div>
-          </div>
-          <div class="tags-box">
-            <div class="tags-box-title" data-es="Idiomas" data-en="Languages">Idiomas</div>
-            <div class="tags-list">
-              <span class="lang-tag">🇪🇸 <span data-es="Español — Nativo" data-en="Spanish — Native">Español — Nativo</span></span>
-              <span class="lang-tag">🇬🇧 <span data-es="Inglés — Avanzado" data-en="English — Advanced">Inglés — Avanzado</span></span>
+            <div class="tags-box">
+              <div class="tags-box-title" data-es="Fortalezas" data-en="Strengths">Fortalezas</div>
+              <div class="tags-list">
+                <span class="ftag" data-es="Responsabilidad" data-en="Responsibility">Responsabilidad</span>
+                <span class="ftag" data-es="Creatividad" data-en="Creativity">Creatividad</span>
+                <span class="ftag" data-es="Perseverancia" data-en="Perseverance">Perseverancia</span>
+                <span class="ftag" data-es="Trabajo en equipo" data-en="Teamwork">Trabajo en equipo</span>
+                <span class="ftag" data-es="Alta capacidad de aprendizaje" data-en="Fast learner">Alta capacidad de aprendizaje</span>
+              </div>
+            </div>
+            <div class="tags-box">
+              <div class="tags-box-title" data-es="Idiomas" data-en="Languages">Idiomas</div>
+              <div class="tags-list">
+                <span class="ltag" data-es="🇪🇸 Español — Nativo" data-en="🇪🇸 Spanish — Native">🇪🇸 Español — Nativo</span>
+                <span class="ltag" data-es="🇬🇧 Inglés — Avanzado" data-en="🇬🇧 English — Advanced">🇬🇧 Inglés — Avanzado</span>
+              </div>
             </div>
           </div>
         </div>
@@ -434,96 +410,68 @@
 
     <!-- HABILIDADES -->
     <section id="habilidades">
-      <div class="section-label" data-es="Habilidades" data-en="Skills">Habilidades</div>
-      <h2 class="section-title fade-in" data-es="Tecnologías" data-en="Technologies">Tecnologías</h2>
-      <div class="skills-grid">
-        <div class="skill-card fade-in">
-          <div class="skill-icon">🌐</div>
-          <div class="skill-name">HTML & CSS</div>
-          <div class="skill-desc" data-es="Maquetación semántica, diseño responsive y animaciones." data-en="Semantic markup, responsive design and animations.">Maquetación semántica, diseño responsive y animaciones.</div>
-          <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
-        </div>
-        <div class="skill-card fade-in">
-          <div class="skill-icon">✨</div>
-          <div class="skill-name">JavaScript</div>
-          <div class="skill-desc" data-es="Interactividad frontend, manipulación del DOM y lógica dinámica." data-en="Frontend interactivity, DOM manipulation and dynamic logic.">Interactividad frontend, manipulación del DOM y lógica dinámica.</div>
-          <div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div>
-        </div>
-        <div class="skill-card fade-in">
-          <div class="skill-icon">⚙️</div>
-          <div class="skill-name">PHP</div>
-          <div class="skill-desc" data-es="Desarrollo de plugins personalizados y lógica de servidor." data-en="Custom plugin development and server-side logic.">Desarrollo de plugins personalizados y lógica de servidor.</div>
-          <div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div>
-        </div>
-        <div class="skill-card fade-in">
-          <div class="skill-icon">🔷</div>
-          <div class="skill-name">WordPress</div>
-          <div class="skill-desc" data-es="Plugins, temas personalizados y ecosistemas completos." data-en="Plugins, custom themes and complete ecosystems.">Plugins, temas personalizados y ecosistemas completos.</div>
-          <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
-        </div>
-        <div class="skill-card fade-in">
-          <div class="skill-icon">🗄️</div>
-          <div class="skill-name">MySQL</div>
-          <div class="skill-desc" data-es="Diseño de bases de datos, consultas SQL y phpMyAdmin." data-en="Database design, SQL queries and phpMyAdmin.">Diseño de bases de datos, consultas SQL y phpMyAdmin.</div>
-          <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
-        </div>
-        <div class="skill-card fade-in">
-          <div class="skill-icon">🛠️</div>
-          <div class="skill-name" data-es="Herramientas" data-en="Tools">Herramientas</div>
-          <div class="skill-desc" data-es="XAMPP, FileZilla, Git, Cloudflare y gestión de hosting." data-en="XAMPP, FileZilla, Git, Cloudflare and hosting management.">XAMPP, FileZilla, Git, Cloudflare y gestión de hosting.</div>
-          <div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div>
+      <div class="section-inner">
+        <div class="section-label" data-es="Habilidades" data-en="Skills">Habilidades</div>
+        <h2 class="section-title fade-in" data-es="Tecnologías" data-en="Technologies">Tecnologías</h2>
+        <div class="skills-grid">
+          <div class="skill-card fade-in"><div class="skill-icon">🌐</div><div class="skill-name">HTML & CSS</div><div class="skill-desc" data-es="Maquetación semántica, diseño responsive y animaciones." data-en="Semantic markup, responsive design and animations.">Maquetación semántica, diseño responsive y animaciones.</div><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">✨</div><div class="skill-name">JavaScript</div><div class="skill-desc" data-es="Interactividad frontend, DOM y lógica dinámica." data-en="Frontend interactivity, DOM manipulation and dynamic logic.">Interactividad frontend, DOM y lógica dinámica.</div><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">⚙️</div><div class="skill-name">PHP</div><div class="skill-desc" data-es="Plugins personalizados y lógica de servidor." data-en="Custom plugins and server-side logic.">Plugins personalizados y lógica de servidor.</div><div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">🔷</div><div class="skill-name">WordPress</div><div class="skill-desc" data-es="Plugins, temas personalizados y ecosistemas completos." data-en="Plugins, custom themes and complete ecosystems.">Plugins, temas personalizados y ecosistemas completos.</div><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">🗄️</div><div class="skill-name">MySQL</div><div class="skill-desc" data-es="Diseño de bases de datos y consultas SQL." data-en="Database design and SQL queries.">Diseño de bases de datos y consultas SQL.</div><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
+          <div class="skill-card fade-in"><div class="skill-icon">🛠️</div><div class="skill-name" data-es="Herramientas" data-en="Tools">Herramientas</div><div class="skill-desc" data-es="XAMPP, FileZilla, Git, Cloudflare y hosting." data-en="XAMPP, FileZilla, Git, Cloudflare and hosting.">XAMPP, FileZilla, Git, Cloudflare y hosting.</div><div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div></div>
         </div>
       </div>
     </section>
 
     <!-- EXPERIENCIA -->
     <section id="experiencia">
-      <div class="section-label" data-es="Experiencia" data-en="Experience">Experiencia</div>
-      <h2 class="section-title fade-in" data-es="Donde he trabajado" data-en="Where I've worked">Donde he trabajado</h2>
-      <div class="exp-grid">
-        <div class="exp-card fade-in">
-          <div class="exp-company">500Cosmetic</div>
-          <div class="exp-role" data-es="Diseñador Web" data-en="Web Designer">Diseñador Web</div>
-          <ul class="exp-list">
-            <li data-es="Diseño de páginas para los productos de la empresa" data-en="Designed product pages for the company">Diseño de páginas para los productos de la empresa</li>
-            <li data-es="Diseño de blogs en diferentes idiomas" data-en="Designed blogs in multiple languages">Diseño de blogs en diferentes idiomas</li>
-          </ul>
-        </div>
-        <div class="exp-card fade-in">
-          <div class="exp-company">500Cosmetic</div>
-          <div class="exp-role" data-es="Programador" data-en="Programmer">Programador</div>
-          <ul class="exp-list">
-            <li data-es="Desarrollo de aplicaciones para uso interno de la empresa" data-en="Developed applications for internal company use">Desarrollo de aplicaciones para uso interno de la empresa</li>
-            <li data-es="Mantenimiento y mejora de funcionalidades existentes" data-en="Maintained and improved existing features">Mantenimiento y mejora de funcionalidades existentes</li>
-          </ul>
+      <div class="section-inner">
+        <div class="section-label" data-es="Experiencia" data-en="Experience">Experiencia</div>
+        <h2 class="section-title fade-in" data-es="Donde he trabajado" data-en="Where I've worked">Donde he trabajado</h2>
+        <div class="exp-grid">
+          <div class="exp-card fade-in">
+            <div class="exp-company">500Cosmetic</div>
+            <div class="exp-role" data-es="Diseñador Web" data-en="Web Designer">Diseñador Web</div>
+            <ul class="exp-list">
+              <li data-es="Diseño de páginas para los productos de la empresa" data-en="Designed product pages for the company">Diseño de páginas para los productos de la empresa</li>
+              <li data-es="Diseño de blogs en diferentes idiomas" data-en="Designed blogs in multiple languages">Diseño de blogs en diferentes idiomas</li>
+            </ul>
+          </div>
+          <div class="exp-card fade-in">
+            <div class="exp-company">500Cosmetic</div>
+            <div class="exp-role" data-es="Programador" data-en="Programmer">Programador</div>
+            <ul class="exp-list">
+              <li data-es="Desarrollo de aplicaciones para uso interno" data-en="Developed applications for internal company use">Desarrollo de aplicaciones para uso interno</li>
+              <li data-es="Mantenimiento y mejora de funcionalidades" data-en="Maintained and improved existing features">Mantenimiento y mejora de funcionalidades</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- PROYECTOS -->
     <section id="proyectos">
-      <div class="section-label" data-es="Proyectos" data-en="Projects">Proyectos</div>
-      <h2 class="section-title fade-in" data-es="Lo que he construido" data-en="What I've built">Lo que he construido</h2>
-      <div class="projects-grid">
-        <div class="project-card fade-in">
-          <div class="project-img project-img-barbershop">✂️</div>
-          <div class="project-body">
-            <div class="project-tags">
-              <span class="tag">WordPress</span><span class="tag">PHP</span><span class="tag">MySQL</span><span class="tag">WooCommerce</span>
-            </div>
-            <div class="project-title">Alcántara Barbershop</div>
-            <div class="project-desc" data-es="Sistema web completo para una barbería premium. Reservas online, tienda de productos, gestión de clientes, roles de usuario y panel de administración con plugins desarrollados desde cero." data-en="Complete web system for a premium barbershop. Online bookings, product store, client management, user roles and custom admin panel built with plugins from scratch.">Sistema web completo para una barbería premium. Reservas online, tienda de productos, gestión de clientes, roles de usuario y panel de administración con plugins desarrollados desde cero.</div>
-            <div class="project-links">
+      <div class="section-inner">
+        <div class="section-label" data-es="Proyectos" data-en="Projects">Proyectos</div>
+        <h2 class="section-title fade-in" data-es="Lo que he construido" data-en="What I've built">Lo que he construido</h2>
+        <div class="projects-grid">
+          <div class="project-card fade-in">
+            <div class="project-img project-img-barbershop">✂️</div>
+            <div class="project-body">
+              <div class="project-tags"><span class="tag">WordPress</span><span class="tag">PHP</span><span class="tag">MySQL</span><span class="tag">WooCommerce</span></div>
+              <div class="project-title">Alcántara Barbershop</div>
+              <div class="project-desc" data-es="Sistema web completo para una barbería premium. Reservas online, tienda, gestión de clientes y panel de administración con plugins desarrollados desde cero." data-en="Complete web system for a premium barbershop. Online bookings, store, client management and custom admin panel built with plugins from scratch.">Sistema web completo para una barbería premium. Reservas online, tienda, gestión de clientes y panel de administración con plugins desarrollados desde cero.</div>
               <a href="https://tfg-danielnavarro.infinityfreeapp.com/wordpress" target="_blank" class="project-link" data-es="Ver en vivo →" data-en="View live →">Ver en vivo →</a>
             </div>
           </div>
-        </div>
-        <div class="project-card fade-in" style="opacity:0.55;">
-          <div class="project-img" style="background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);font-size:3rem;">🚀</div>
-          <div class="project-body">
-            <div class="project-tags"><span class="tag" data-es="Próximamente" data-en="Coming soon">Próximamente</span></div>
-            <div class="project-title" data-es="Próximo proyecto" data-en="Next project">Próximo proyecto</div>
-            <div class="project-desc" data-es="Explorando nuevas tecnologías. ¡Pronto más novedades!" data-en="Exploring new technologies. More news soon!">Explorando nuevas tecnologías. ¡Pronto más novedades!</div>
+          <div class="project-card fade-in" style="opacity:0.5;">
+            <div class="project-img" style="background:linear-gradient(135deg,#0a0a2a,#1a0a2a,#0a1a2a);">🚀</div>
+            <div class="project-body">
+              <div class="project-tags"><span class="tag" data-es="Próximamente" data-en="Coming soon">Próximamente</span></div>
+              <div class="project-title" data-es="Próximo proyecto" data-en="Next project">Próximo proyecto</div>
+              <div class="project-desc" data-es="Explorando nuevas tecnologías. ¡Pronto más novedades!" data-en="Exploring new technologies. More news soon!">Explorando nuevas tecnologías. ¡Pronto más novedades!</div>
+            </div>
           </div>
         </div>
       </div>
@@ -531,48 +479,52 @@
 
     <!-- FORMACION -->
     <section id="formacion">
-      <div class="section-label" data-es="Formación" data-en="Education">Formación</div>
-      <h2 class="section-title fade-in" data-es="Mi trayectoria" data-en="My journey">Mi trayectoria</h2>
-      <div class="timeline">
-        <div class="timeline-item fade-in">
-          <div class="timeline-dot"></div>
-          <div class="timeline-year" data-es="Completado" data-en="Completed">Completado</div>
-          <div class="timeline-title" data-es="Bachillerato" data-en="High School Diploma">Bachillerato</div>
-          <div class="timeline-place" data-es="Educación secundaria postobligatoria" data-en="Post-compulsory secondary education">Educación secundaria postobligatoria</div>
-        </div>
-        <div class="timeline-item fade-in">
-          <div class="timeline-dot"></div>
-          <div class="timeline-year" data-es="Completado" data-en="Completed">Completado</div>
-          <div class="timeline-title" data-es="Grado Superior — Desarrollo de Aplicaciones Multiplataforma (DAM)" data-en="Higher Degree — Cross-Platform Application Development (DAM)">Grado Superior — Desarrollo de Aplicaciones Multiplataforma (DAM)</div>
-          <div class="timeline-place" data-es="Ciclo Formativo de Grado Superior" data-en="Higher Vocational Training">Ciclo Formativo de Grado Superior</div>
-          <div class="timeline-desc" data-es="Programación orientada a objetos, bases de datos y desarrollo multiplataforma." data-en="Object-oriented programming, databases and cross-platform development.">Programación orientada a objetos, bases de datos y desarrollo multiplataforma.</div>
-        </div>
-        <div class="timeline-item fade-in">
-          <div class="timeline-dot"></div>
-          <div class="timeline-year" data-es="Completado" data-en="Completed">Completado</div>
-          <div class="timeline-title" data-es="Cursillo online de programación" data-en="Online programming course">Cursillo online de programación</div>
-          <div class="timeline-place" data-es="Formación complementaria online" data-en="Complementary online training">Formación complementaria online</div>
-        </div>
-        <div class="timeline-item fade-in">
-          <div class="timeline-dot"></div>
-          <div class="timeline-year" data-es="En curso · Actualmente" data-en="In progress · Currently">En curso · Actualmente</div>
-          <div class="timeline-title" data-es="Grado Superior — Desarrollo de Aplicaciones Web (DAW)" data-en="Higher Degree — Web Application Development (DAW)">Grado Superior — Desarrollo de Aplicaciones Web (DAW)</div>
-          <div class="timeline-place" data-es="Ciclo Formativo de Grado Superior" data-en="Higher Vocational Training">Ciclo Formativo de Grado Superior</div>
-          <div class="timeline-desc" data-es="Especialización en desarrollo web full stack. TFG: sistema completo de gestión para negocio real con WordPress, PHP y MySQL." data-en="Specialisation in full stack web development. Final project: complete management system for a real business using WordPress, PHP and MySQL.">Especialización en desarrollo web full stack. TFG: sistema completo de gestión para negocio real con WordPress, PHP y MySQL.</div>
+      <div class="section-inner">
+        <div class="section-label" data-es="Formación" data-en="Education">Formación</div>
+        <h2 class="section-title fade-in" data-es="Mi trayectoria" data-en="My journey">Mi trayectoria</h2>
+        <div class="timeline">
+          <div class="timeline-item fade-in">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year" data-es="Completado" data-en="Completed">Completado</div>
+            <div class="timeline-title" data-es="Bachillerato" data-en="High School Diploma">Bachillerato</div>
+            <div class="timeline-place" data-es="Educación secundaria postobligatoria" data-en="Post-compulsory secondary education">Educación secundaria postobligatoria</div>
+          </div>
+          <div class="timeline-item fade-in">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year" data-es="Completado" data-en="Completed">Completado</div>
+            <div class="timeline-title" data-es="Grado Superior — DAM (Aplicaciones Multiplataforma)" data-en="Higher Degree — DAM (Cross-Platform Applications)">Grado Superior — DAM (Aplicaciones Multiplataforma)</div>
+            <div class="timeline-place" data-es="Ciclo Formativo de Grado Superior" data-en="Higher Vocational Training">Ciclo Formativo de Grado Superior</div>
+            <div class="timeline-desc" data-es="Programación orientada a objetos, bases de datos y desarrollo multiplataforma." data-en="Object-oriented programming, databases and cross-platform development.">Programación orientada a objetos, bases de datos y desarrollo multiplataforma.</div>
+          </div>
+          <div class="timeline-item fade-in">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year" data-es="Completado" data-en="Completed">Completado</div>
+            <div class="timeline-title" data-es="Cursillo online de programación" data-en="Online programming course">Cursillo online de programación</div>
+            <div class="timeline-place" data-es="Formación complementaria online" data-en="Complementary online training">Formación complementaria online</div>
+          </div>
+          <div class="timeline-item fade-in">
+            <div class="timeline-dot"></div>
+            <div class="timeline-year" data-es="En curso · Actualmente" data-en="In progress · Currently">En curso · Actualmente</div>
+            <div class="timeline-title" data-es="Grado Superior — DAW (Desarrollo de Aplicaciones Web)" data-en="Higher Degree — DAW (Web Application Development)">Grado Superior — DAW (Desarrollo de Aplicaciones Web)</div>
+            <div class="timeline-place" data-es="Ciclo Formativo de Grado Superior" data-en="Higher Vocational Training">Ciclo Formativo de Grado Superior</div>
+            <div class="timeline-desc" data-es="Desarrollo web full stack. TFG: sistema completo para barbería real con WordPress, PHP y MySQL." data-en="Full stack web development. Final project: complete system for a real barbershop using WordPress, PHP and MySQL.">Desarrollo web full stack. TFG: sistema completo para barbería real con WordPress, PHP y MySQL.</div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- CONTACTO -->
     <section id="contacto">
-      <div class="contacto-inner">
-        <div class="section-label" style="justify-content:center" data-es="Contacto" data-en="Contact">Contacto</div>
-        <h2 class="section-title fade-in" data-es="Hablemos" data-en="Let's talk">Hablemos</h2>
-        <p class="fade-in" data-es="¿Tienes un proyecto en mente o quieres saber más sobre mi trabajo? Estoy disponible y con ganas de nuevos retos." data-en="Have a project in mind or want to know more about my work? I'm available and ready for new challenges.">¿Tienes un proyecto en mente o quieres saber más sobre mi trabajo? Estoy disponible y con ganas de nuevos retos.</p>
-        <div class="contacto-links fade-in">
-          <a href="mailto:d.navarrofernandez@gmail.com" class="contacto-link">📧 d.navarrofernandez@gmail.com</a>
-          <a href="tel:651562319" class="contacto-link">📱 651 562 319</a>
-          <a href="https://instagram.com/danniel_navarro_" target="_blank" class="contacto-link">📸 @danniel_navarro_</a>
+      <div class="section-inner">
+        <div class="contacto-inner">
+          <div class="section-label" style="justify-content:center" data-es="Contacto" data-en="Contact">Contacto</div>
+          <h2 class="section-title fade-in" data-es="Hablemos" data-en="Let's talk">Hablemos</h2>
+          <p class="fade-in" data-es="¿Tienes un proyecto en mente o quieres saber más sobre mi trabajo? Estoy disponible y con ganas de nuevos retos." data-en="Have a project in mind or want to know more about my work? I'm available and ready for new challenges.">¿Tienes un proyecto en mente o quieres saber más sobre mi trabajo? Estoy disponible y con ganas de nuevos retos.</p>
+          <div class="contacto-links fade-in">
+            <a href="mailto:d.navarrofernandez@gmail.com" class="contacto-link">📧 d.navarrofernandez@gmail.com</a>
+            <a href="tel:651562319" class="contacto-link">📱 651 562 319</a>
+            <a href="https://instagram.com/danniel_navarro_" target="_blank" class="contacto-link">📸 @danniel_navarro_</a>
+          </div>
         </div>
       </div>
     </section>
@@ -583,33 +535,25 @@
   </div>
 
   <script>
-    // ============ PARTICLES ============
+    // PARTICLES
     const container = document.getElementById('particles');
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 30; i++) {
       const p = document.createElement('div');
       p.className = 'particle';
-      p.style.cssText = `
-        left: ${Math.random() * 100}%;
-        width: ${Math.random() * 3 + 1}px;
-        height: ${Math.random() * 3 + 1}px;
-        animation-duration: ${Math.random() * 8 + 6}s;
-        animation-delay: ${Math.random() * 5}s;
-        background: ${Math.random() > 0.5 ? '#6c63ff' : '#43e8d8'};
-      `;
+      const size = Math.random() * 4 + 1;
+      p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;animation-duration:${Math.random()*10+6}s;animation-delay:${Math.random()*8}s;background:${Math.random()>0.5?'rgba(124,111,255,0.6)':'rgba(0,212,255,0.6)'};`;
       container.appendChild(p);
     }
 
-    // ============ LANGUAGE ============
+    // LANG
     let currentLang = 'es';
 
     function selectLang(lang) {
       currentLang = lang;
-      const screen = document.getElementById('lang-screen');
-      const site = document.getElementById('main-site');
-      screen.classList.add('hide');
+      document.getElementById('lang-screen').classList.add('hide');
       setTimeout(() => {
-        screen.style.display = 'none';
-        site.classList.add('visible');
+        document.getElementById('lang-screen').style.display = 'none';
+        document.getElementById('main-site').classList.add('visible');
         applyLang(lang);
         initScrollAnimations();
       }, 800);
@@ -633,14 +577,13 @@
       document.documentElement.lang = lang;
     }
 
-    // ============ SCROLL ANIMATIONS ============
     function initScrollAnimations() {
-      const observer = new IntersectionObserver((entries) => {
+      const obs = new IntersectionObserver((entries) => {
         entries.forEach((entry, i) => {
           if (entry.isIntersecting) setTimeout(() => entry.target.classList.add('visible'), i * 80);
         });
       }, { threshold: 0.1 });
-      document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+      document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
     }
 
     // Active nav
