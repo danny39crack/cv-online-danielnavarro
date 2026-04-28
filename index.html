@@ -1092,7 +1092,7 @@
         numEl.dataset.animated = '1';
         const text = numEl.textContent.trim();
         const num = parseFloat(text);
-        const suffix = text.replace(/[\d.]/g, '');
+        const suffix = text.slice(text.match(/[\d.]+/)[0].length);
         animateCount(numEl, num, suffix);
       });
     }, { threshold: 0.5 });
