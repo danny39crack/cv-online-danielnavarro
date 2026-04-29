@@ -389,7 +389,10 @@
       100% { filter: hue-rotate(0deg); }
     }
     * { cursor: none; }
-    @media (hover: none) { * { cursor: auto; } }
+    @media (hover: none), (pointer: coarse) {
+      * { cursor: auto; }
+      #cursor-dot, #cursor-ring { display: none !important; }
+    }
     #cursor-dot {
       position: fixed; top: 0; left: 0; z-index: 99999;
       width: 8px; height: 8px; border-radius: 50%;
